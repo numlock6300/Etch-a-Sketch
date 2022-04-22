@@ -1,17 +1,21 @@
 let mainContainer = document.querySelector("#main-container");
 let mainWidth = mainContainer.clientWidth;
 let mainHeight = mainContainer.clientHeight;
-console.log(mainContainer.style)
 
+// Default dimensons for grid
 let maxRows = 16;
 let maxColumns = 16;
 
+// Size of the cells 
 let colWidth = mainWidth / maxColumns;
 let rowHeight = mainHeight / maxRows;
 
+// Initialazing RGB values
 let redIni = 0;
 let greenIni = 0;
 let blueIni = 0;
+
+let mouseIsDown = false;
 
 let resetButton = document.createElement("button");
 resetButton.innerText = "Reset";
@@ -35,8 +39,10 @@ function createGrid(){
 }
 
 function changeColor(e){
+    if(!mouseIsDown){return}
     if(getComputedStyle(e.target).backgroundColor !== cellDefaultColor)
     {
+        console.log("down");
         //decrease brightnes by 10%;
         let rgbValues = ((e.target.style.backgroundColor).slice(4,-1)).split(",");
         let red = rgbValues[0] - redIni * 0.1;
@@ -52,11 +58,15 @@ function changeColor(e){
     blueIni = Math.floor(Math.random()*255);
     e.target.style.backgroundColor = `rgb(${redIni}, ${greenIni}, ${blueIni})`;
     //console.dir(getComputedStyle(e.target).backgroundColor);
+    
 }
 
-function colorGrid(){
+function colorGrid(e){
+    console.log('colorGrid');
+    if(mouseIsDown){
     let cells = Array.from(document.querySelectorAll(".column"));
     cells.forEach(cell => cell.addEventListener('mouseover', changeColor));
+    }
 }
 
 function resetGrid(){
@@ -75,14 +85,31 @@ function resetGrid(){
             console.log(Number.isInteger(input));
         }
     }
+
+     colWidth = mainWidth / input;
+     rowHeight = mainHeight / input;
+
     mainContainer.innerHTML = "";
     createGrid();
-    colorGrid();
+    //colorGrid();
 }
 
 createGrid();
-const cellDefaultColor = getComputedStyle(document.querySelector(".column")).backgroundColor;
+const cellDefaultColor = getComputedStyle(document.querySelector(".column")).backgroundColor; // gets value from css file
+
+document.addEventListener('mousedown', function(){
+    mouseIsDown = true;
+    colorGrid();
+});
+document.addEventListener('mouseup', function(){
+    mouseIsDown = false;
+})
+
+// Preventing drag efect when mouse is down
+document.addEventListener('dragstart', function(e){
+    e.preventDefault();
+})
 
 resetButton.addEventListener('click', resetGrid);
-colorGrid();
 
+//colorGrid();

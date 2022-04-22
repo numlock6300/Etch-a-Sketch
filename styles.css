@@ -16,7 +16,7 @@ body {
 
 .row {
     display: flex;
-    background-color: white;
+    background-color: red;
     /*height: 250px;*/
 }
 
